@@ -1,43 +1,42 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-//* where our config file is present
-dotenv.config({ path: "./config.env" });
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: Number,
-    required: true,
-  },
-  work: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  cpassword: {
-    type: String,
-    required: true,
-  },
-  //todo this is the array of the token
-  tokens: [
-    {
-      token: {
-        type: String,
-      },
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
     },
-  ],
-});
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    phone: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    }, //todo this is the array of the token
+    tokens: [
+      {
+        token: {
+          type: String,
+        },
+      },
+    ],
+  },
+  //   todo updateAt createdAt is se pata chal jay ga
+  { timestamps: true }
+);
 
 //todo database ma save karny se  pehly hum ye kam karin gay
 userSchema.pre("save", async function (next) {
@@ -46,7 +45,6 @@ userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 12);
     console.log(this.password);
-    this.cpassword = await bcrypt.hash(this.cpassword, 12);
   }
   //todo beacuse of this next .save method willl be callled
   next();
@@ -68,9 +66,4 @@ userSchema.methods.generateAuthToken = async function () {
   }
 };
 
-//* first one is the table name to be created
-//* second one is the schema for the table
-const USER = mongoose.model("USER", userSchema);
-
-//* ab humin jaha jaha chahiyay we will use it for post to write data to database
-module.exports = USER;
+module.exports = mongoose.model("User", userSchema);
