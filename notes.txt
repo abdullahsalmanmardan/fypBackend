@@ -1,0 +1,8 @@
+1. npm init -y  // is se pakage.json ban jay ga
+2. npm i express
+3. npm i nodemon
+4. npm i jsonwebtoken
+5.npm i bcryptjs   
+7.npm i cookie-parser
+8.npm i dotenv        
+9. npm i mongoose
